@@ -6,6 +6,7 @@ import TrainingStatus from "./Pages/TrainingStatus";
 import Error from "./Pages/Error";
 import NavBar from "./components/OnWholeApp/NavBar";
 import MyDataProvider from "./GlobalContext";
+import EventsAction from "./EventsActions";
 
 /*
       A global file namely GlobalContext.jsx is defined to maintain the global Data Provider,
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <>
       <MyDataProvider>
+        <EventsAction />
         <NavBar />
         <div
           style={{
