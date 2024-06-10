@@ -5,9 +5,9 @@ import { useGlobalData } from "../GlobalContext";
 
 export default function Register() {
   const { GlobalData, setGlobalData } = useGlobalData();
-  const clientIDRef = useRef();
-  const nameRef = useRef();
-  const emailRef = useRef();
+  const clientIDRef = useRef("");
+  const dataPathRef = useRef("");
+  const emailRef = useRef("");
 
   const handleRegistration = (event) => {
     event.preventDefault();
@@ -15,30 +15,41 @@ export default function Register() {
       console.log("Already registered..");
       return;
     }
+
+    const clientData = {
+      name: clientIDRef.current.value,
+      data_path: dataPathRef.current.value,
+      email: emailRef.current.value,
+    };
+
     let eventSource = null;
     console.log("SSE connection Request Sent");
     try {
       const stream_url = "http://localhost:8000/events";
       eventSource = new EventSource(stream_url);
     } catch (err) {
-      console.log("The error occured while SSE connection is:", err);
+      console.log("The error occurred while SSE connection is:", err);
     }
 
     setGlobalData({
       ...GlobalData,
       Client: {
-        ...GlobalData.Client,
-        ClientID: clientIDRef.current.value,
-        Name: nameRef.current.value,
-        Email: emailRef.current.value,
+        ClientID: clientData.name,
+        DataPath: clientData.data_path,
+        Email: clientData.email,
       },
       ConnectionObject: eventSource,
     });
-    const postData = async () => {
+
+    const postData = async (url, data) => {
+      console.log("Data in POST", JSON.stringify(data));
       try {
-        const res = await fetch("http://localhost:8000/sign-in", {
+        const res = await fetch(url, {
           method: "POST",
-          body: JSON.stringify(GlobalData.Client),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         });
 
         if (!res.ok) {
@@ -46,14 +57,13 @@ export default function Register() {
         }
 
         const result = await res.json();
+        console.log("Response from server:", result);
       } catch (err) {
-        console.log("Erro in sending Client Reg Data:", err);
+        console.log("Error in sending Client Reg Data:", err);
       }
     };
 
-    postData();
-
-    console.log("Log from register onsubmit completion");
+    postData("http://localhost:8000/sign-in", clientData);
   };
 
   const handleDeregistration = (event) => {
@@ -64,13 +74,13 @@ export default function Register() {
       Client: {
         ...GlobalData.Client,
         ClientID: "",
-        Name: "",
+        DataPath: "",
         Email: "",
       },
       ConnectionObject: null,
     });
     clientIDRef.current.value = "";
-    nameRef.current.value = "";
+    dataPathRef.current.value = "";
     emailRef.current.value = "";
   };
 
@@ -92,14 +102,14 @@ export default function Register() {
         ></input>
       </div>
       <div className="col-12">
-        <label className="form-label">Name:</label>
+        <label className="form-label">DataPath:</label>
         <input
           type="text"
           className="form-control"
           id="inputName"
           placeholder="Enter Name"
-          defaultValue={GlobalData.Client.Name}
-          ref={nameRef}
+          defaultValue={GlobalData.Client.DataPath}
+          ref={dataPathRef}
         ></input>
       </div>
       <div className="col-12">

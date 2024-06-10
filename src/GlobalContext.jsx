@@ -6,7 +6,7 @@ export const useGlobalData = () => useContext(GlobalContext);
 
 export default function MyDataProvider({ children }) {
   const Global_data = {
-    Client: { ClientID: "", Name: "", Email: "" },
+    Client: { ClientID: "", DataPath: "", Email: "" },
     ConnectionObject: null,
     CurrentModels: [
       {

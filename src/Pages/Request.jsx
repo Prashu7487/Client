@@ -41,12 +41,36 @@ export default function App() {
       Data: formData.dataInfo,
     };
 
+    const postData = async (url, data) => {
+      console.log("Data in Request", JSON.stringify(data));
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const result = await res.json();
+        console.log("Response from server:", result);
+      } catch (err) {
+        console.log("Error in sending Client Reg Data:", err);
+      }
+    };
+
+    postData("http://localhost:8000/request_training", newRequestData);
+
     setGlobalData((prevGlobalData) => ({
       ...prevGlobalData,
       CurrentModels: [...prevGlobalData.CurrentModels, newRequestData],
     }));
 
-    // Optionally, reset the form data
+    // Rresetting the form data (Optional)
     setFormData({
       orgName: "",
       dataInfo: {},
