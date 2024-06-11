@@ -82,6 +82,10 @@ export default function Register() {
     clientIDRef.current.value = "";
     dataPathRef.current.value = "";
     emailRef.current.value = "";
+    console.log(
+      "In deregistration null value of connection obj",
+      GlobalData.ConnectionObject == null
+    );
   };
 
   return (
